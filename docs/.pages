@@ -1,0 +1,19 @@
+# Page configuration for 'mkdocs-awesome-pages-plugin'
+nav:
+    - Home:
+          - About: index.md
+          - Getting started:
+                - Tutorial: tutorial.md
+                - Release checklist: pypi_release_checklist.md
+          - Basics:
+                - Prompts: prompts.md
+                - Automated tasks: automated_tasks.md
+          - Advanced Features:
+                - Console Script Setup: console_script_setup.md
+          - Documentation:
+                - Write documentation: write_docs.md
+                - Build and release: build_release_docs.md
+    - FAQ: faq.md
+    - Troubleshooting: troubleshooting.md
+    - Contributing: contributing.md
+    - History: history.md

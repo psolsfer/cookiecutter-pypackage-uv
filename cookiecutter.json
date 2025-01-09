@@ -1,0 +1,82 @@
+{
+    "full_name": "Firstname Lastname",
+    "email": "email@example.com",
+    "github_username": "gituser",
+    "project_name": "Python Boilerplate",
+    "project_slug": "{{ cookiecutter.project_name|slugify(separator='_') }}",
+    "project_short_description": "Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    "pypi_username": "{{ cookiecutter.github_username }}",
+    "private_package_repository_name": "",
+    "private_package_repository_url": "",
+    "version": "0.1.0",
+    "python_version": "3.10",
+    "use_pytest": "y",
+    "formatter": [
+        "Ruff-format",
+        "Black",
+        "No"
+    ],
+    "docs": [
+        "Read the docs",
+        "Github Pages",
+        "No"
+    ],
+    "development_environment": [
+        "simple",
+        "strict"
+    ],
+    "with_jupyter_lab": "n",
+    "with_pydantic_typing": "y",
+    "command_line_interface": [
+        "No command-line interface",
+        "Click",
+        "Typer",
+        "Argparse"
+    ],
+    "create_author_file": "y",
+    "docstring_style": [
+        "numpy",
+        "google"
+    ],
+    "open_source_license": [
+        "BSD-3-Clause",
+        "MIT",
+        "ISC",
+        "Apache-2.0",
+        "GPL-3.0-only",
+        "Not open source"
+    ],
+    "__prompts__": {
+        "full_name": "Author [bold yellow]full name[/]",
+        "email": "Author [bold yellow]email[/]",
+        "github_username": "[bold yellow]GitHub username[/]",
+        "project_name": "[bold yellow]Project name[/]",
+        "project_slug": "[bold yellow]Project slug[/]",
+        "project_short_description": "[bold yellow]Short description[/] of the project",
+        "pypi_username": "[bold yellow]PyPI username[/]",
+        "private_package_repository_name": "Name of the private package repository",
+        "private_package_repository_url": "URL of the private package repository",
+        "version": "Initial [bold yellow]project version[/]",
+        "python_version": "[bold yellow]Python version[/] to use",
+        "use_pytest": "Use pytest [y/n]",
+        "formatter": "[bold yellow]Code formatter[/] to use",
+        "docs": "Documentation platform to use",
+        "development_environment": "Type of development environment",
+        "with_jupyter_lab": "Include Jupyter Lab [y/n]",
+        "with_pydantic_typing": "[bold yellow]Use Pydantic[/] for typing [y/n]",
+        "command_line_interface": "[bold yellow]Command-line interface[/] to use",
+        "create_author_file": "Create an [bold yellow]AUTHORS file[/] [y/n]",
+        "docstring_style": "[bold yellow]Docstring style[/] to use",
+        "open_source_license": "[bold yellow]Open source license[/] to use"
+    },
+    "_copy_without_render": [
+        "*.github/dependabot.yml",
+        "*.github/release-drafter.yml",
+        "*.github/workflows/release-drafter.yml",
+        "*.github/workflows/test-push-pr.yml",
+        "docs/authors.md",
+        "docs/contributing.md",
+        "docs/history.md",
+        "docs/index.md"
+    ]
+}

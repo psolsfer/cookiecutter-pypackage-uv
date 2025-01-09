@@ -1,0 +1,152 @@
+{% raw %}
+# This workflow will upload a Python Package using Twine when a release or a tag is created
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
+# and https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Build & Publish Python Package
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+    PYTHON_VERSION: {% endraw %}"{{ cookiecutter.python_version }}"{% raw %}
+
+jobs:
+  build:
+    name: Build & Verify Package
+    runs-on: ubuntu-latest
+    permissions:
+      attestations: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5 # Will this use cache? https://github.com/astral-sh/setup-uv?tab=readme-ov-file#enable-caching
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+      - name: Run style & type checks
+        run: uv run invoke lint
+      - name: Build package
+        run: uv build{% endraw %}{%- if not cookiecutter.private_package_repository_name -%}{% raw %}
+      - name: Store the distribution package
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  release-test-pypi:
+    name: Publish to TestPyPI
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build
+    environment: test-pypi # NOTE Need to configure the environment in Github (no approval required)
+
+    permissions:
+      id-token: write # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  release-pypi:
+    name: Publish released package to PyPI
+    if: github.event.action == 'published'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi # NOTE Need to configure the environment in Github
+
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    name: >-
+        Sign the Python distribution with Sigstore
+        and upload them to GitHub Release
+    needs: release-pypi
+    runs-on: ubuntu-latest
+
+    permissions:
+        contents: write  # IMPORTANT: mandatory for making GitHub Releases
+        id-token: write  # IMPORTANT: mandatory for sigstore
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Sign the dists with Sigstore
+        uses: sigstore/gh-action-sigstore-python@v3.0.0
+        with:
+          inputs: >-
+              ./dist/*.tar.gz
+              ./dist/*.whl
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          gh release create
+          "$GITHUB_REF_NAME"
+          --repo "$GITHUB_REPOSITORY"
+          --notes ""
+      - name: Upload artifact signatures to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Upload to GitHub Release using the `gh` CLI.
+          # `dist/` contains the built packages, and the
+          # sigstore-produced signatures and certificates.
+        run: >-
+          gh release upload
+          "$GITHUB_REF_NAME" dist/**
+          --repo "$GITHUB_REPOSITORY"
+{% endraw %}{%- else %}{% raw %}
+  publish-private:
+    name: >-
+        Publish to private repository
+    if: github.event.action == 'published'
+    needs:
+    - build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Publish package
+      run: |
+        uv publish dist/* \
+        --publish-url "${{ secrets.PRIVATE_PACKAGE_REPOSITORY_URL }}" \
+        -u "${{ secrets.PRIVATE_REPO_USERNAME }}" \
+        -p "${{ secrets.PRIVATE_REPO_PASSWORD }}"
+{% endraw %}{%- endif %}

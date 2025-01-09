@@ -1,0 +1,38 @@
+# .readthedocs.yaml
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html
+# and https://docs.readthedocs.io/en/stable/build-customization.html#install-dependencies-with-uv
+# for details
+
+# Required
+version: 2
+
+# Set the version of Python and other tools you might need
+build:
+    os: ubuntu-24.04
+    tools:
+        python: "3.13"
+    jobs:
+        create_environment:
+            # Install uv using asdf
+            - asdf plugin add uv
+            - asdf install uv latest
+            - asdf global uv latest
+            # Create a virtual environment
+            - uv venv
+        install:
+         # Install dependencies with docs using uv
+            - uv install --group docs
+        # build: # ??? Needed? Later there is the 'mkdocs' section
+        #     # Build documentation with MkDocs
+        #     html:
+        #         - NO_COLOR=1 uv run mkdocs build --strict --site-dir $READTHEDOCS_OUTPUT/html
+
+
+# Build documentation in the docs/ directory with MkDocs
+mkdocs:
+    configuration: mkdocs.yml
+# Optionally declare the Python requirements required to build your docs
+# python:
+#   install:
+#   - requirements: docs/requirements.txt

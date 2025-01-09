@@ -1,0 +1,172 @@
+[project]
+name = "Cookiecutter-Pypackage-uv"
+version = "0.1.0"
+description = "Cookiecutter/Cruft template for a Python package managed with uv."
+authors = [
+    {name = "Pablo Solís-Fernández", email = "psolsfer@gmail.com"},
+]
+readme = "README.md"
+
+keywords = [
+    "python",
+    "cookiecutter",
+    "template",
+    "cruft",
+    "ruff",
+    "black",
+    "template",
+    "packages",
+    "uv",
+    "codestyle",
+    "formatters",
+    "python-packages"
+]
+license = "BSD-3-Clause"
+# Pypi classifiers: https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development",
+]
+
+requires-python = "<3.14,>=3.10"
+
+dependencies = [
+    "cookiecutter>=2.3",
+    "cruft>=2.15.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/psolsfer/cookiecutter-pypackage-uv"
+Repository = "https://github.com/psolsfer/cookiecutter-pypackage-uv"
+Documentation = "https://cookiecutter-pypackage-uv.readthedocs.io"
+
+[dependency-groups] # https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
+dev = [ # https://docs.astral.sh/uv/concepts/projects/dependencies/#development-dependencies
+    "commitizen>=3.10",
+    "cookiecutter>=2.3",
+    "coverage>=7.3.1",
+    "cruft>=2.15.0",
+    "invoke>=2.2",
+    "mkdocs>=1.5.3",
+    "mkdocs-awesome-pages-plugin>=2.9.2",
+    "mkdocs-include-markdown-plugin>=6.0",
+    "mkdocs-material>=9.4.2",
+    "mkdocs-material-extensions>=1.2",
+    "mkdocstrings[python]>=0.23.0",
+    "mypy>=1.6.0",
+    "pip>=23",
+    "pre-commit>=3.3.1",
+    "pytest>=7.4.2",
+    "pytest-cookies>=0.7.0",
+    "ruff>=0.8",
+    "safety!=2.3.5,>=2.3.4",
+    "typeguard>=4.1.5",
+    "tox>=4.11",
+    "tox-gh-actions<4,>=3",
+    "tox-uv>1.20",
+    "watchdog>=3.0.0",
+    "wheel>=0.41.2",
+]
+test = [
+    "commitizen>=3.10",
+    "coverage[toml]>=7.3.1",
+    "mypy>=1.6.0",
+    "pre-commit>=3.3.1",
+    "pytest>=7.4.2",
+    "pytest-cookies>=0.7.0",
+    "pytest-clarity>=1.0.1",
+    "pytest-mock>=3.10.0",
+    "pytest-xdist>=3.3.1",
+    "ruff>=0.8",
+    "safety!=2.3.5,>=2.3.4",
+    "typeguard>=4.1.5",
+    "tomli<3,>=2; python_version<'3.11'",
+]
+docs = [
+    "mkdocs>=1.5.3",
+    "mkdocs-awesome-pages-plugin>=2.9.2",
+    "mkdocs-include-markdown-plugin>=6.0",
+    "mkdocs-material>=9.4.2",
+    "mkdocs-material-extensions>=1.2",
+    "mkdocstrings[python]>=0.23.0",
+]
+
+
+[tool.commitizen]  # https://commitizen-tools.github.io/commitizen/config/
+bump_message = "bump(release): v$current_version → v$new_version"
+tag_format = "v$version"
+update_changelog_on_bump = true
+version = "0.1.0"
+version_files = [
+    "pyproject.toml:version"
+    ]
+
+
+[tool.mypy]  # https://mypy.readthedocs.io/en/latest/config_file.html
+plugins = "pydantic.mypy"
+strict = true
+disallow_subclassing_any = false
+disallow_untyped_decorators = false
+ignore_missing_imports = true
+pretty = true
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+warn_unreachable = true
+
+[tool.pydantic-mypy]  # https://pydantic-docs.helpmanual.io/mypy_plugin/#configuring-the-plugin
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[tool.coverage.report]  # https://coverage.readthedocs.io/en/latest/config.html#report
+fail_under = 0 # Set the desired threshold for the coverage report to fail
+precision = 1
+show_missing = true
+skip_covered = true
+
+[tool.pytest.ini_options]  # https://docs.pytest.org/en/latest/reference/reference.html#ini-options-ref
+addopts = [
+    "--color=yes",
+    "--doctest-modules",
+    "--exitfirst",
+    "--failed-first",
+    "--strict-config",
+    "--strict-markers",
+    "--typeguard-packages=cookiecutter-pypackage-uv",
+    "--verbosity=2",
+    "--junitxml=reports/pytest.xml"
+]
+filterwarnings = ["error", "ignore::DeprecationWarning"]
+testpaths = ["tests"]
+xfail_strict = true
+
+[tool.ruff]  # https://github.com/charliermarsh/ruff
+fix = true
+line-length = 100
+
+[tool.ruff.lint]
+ignore = ["E501", "ISC001", "RET504", "S101"]
+select = ["A", "ASYNC", "B", "BLE", "C4", "C90", "D", "DTZ", "E", "EM", "ERA", "F", "FLY", "G", "I", "ICN", "INP", "ISC", "N", "NPY", "PGH", "PIE", "PLC", "PLE", "PLR", "PLW", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "S", "SIM", "SLF", "T10", "T20", "TCH", "TID", "TRY", "UP", "W", "YTT"]
+unfixable = ["ERA001", "F401", "F841", "T201", "T203"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 100
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+line-ending = "auto"

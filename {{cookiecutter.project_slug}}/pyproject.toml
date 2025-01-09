@@ -1,0 +1,264 @@
+{%- set license_classifiers = {
+    'MIT': 'License :: OSI Approved :: MIT License',
+    'BSD-3-Clause': 'License :: OSI Approved :: BSD License',
+    'ISC': 'License :: OSI Approved :: ISC License (ISCL)',
+    'Apache-2.0': 'License :: OSI Approved :: Apache Software License',
+    'GPL-3.0-only': 'License :: OSI Approved :: GNU General Public License v3 (GPLv3)'
+} -%}
+
+{%- set command_line = cookiecutter.command_line_interface|lower -%}
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "{{ cookiecutter.project_slug }}"
+version = "{{ cookiecutter.version }}"
+description = "{{ cookiecutter.project_short_description }}"
+authors = [
+    {name = "{{ cookiecutter.full_name.replace('\"', '\\\"') }}", email = "{{ cookiecutter.email }}"}
+]
+readme = "README.md"
+keywords = ["{{ cookiecutter.project_slug }}"]
+{%- if not cookiecutter.open_source_license=="Not open source" %}
+license = "{{ cookiecutter.open_source_license }}"
+{%- endif %}
+classifiers = [     # Pypi classifiers: https://pypi.org/classifiers/
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+{%- if not cookiecutter.open_source_license=="Not open source" %}
+    "{{ license_classifiers[cookiecutter.open_source_license] }}",
+{%- endif %}
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10", # TODO Lines for python below the minimum version must be removed from the final pyproject.toml file
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = "<3.14,>={{ cookiecutter.python_version }}"
+dependencies = [
+    {%- if command_line == 'click' %}
+    "click>=7.0",
+    {%- elif command_line == 'typer' %}
+    "typer>=0.15.0",
+    {%- endif %}
+    {%- if cookiecutter.with_pydantic_typing == "y" %}
+    "pydantic>=2.4.0",
+    {%- endif %}
+]
+
+[project.urls]
+Homepage = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}"
+Repository = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}"
+{%- if 'read' in cookiecutter.docs|lower %}
+Documentation = "https://{{ cookiecutter.project_slug | replace("_", "-") }}.readthedocs.io"
+{%- elif 'gitub' in cookiecutter.docs|lower %}
+Documentation = "https://{{ cookiecutter.github_username }}.github.io/{{ cookiecutter.project_slug }}/"
+{%- endif %}
+
+[tool.hatch.build]
+packages = ["src/{{ cookiecutter.project_slug }}"]
+include = [
+{% if cookiecutter.create_author_file == 'y' -%}
+#    "AUTHORS.md",
+{% endif -%}
+#    "CONTRIBUTING.md",
+#    "HISTORY.md",
+#    "LICENSE",
+#    "py.typed",
+#    "README.md",
+#    "tests/**/*",
+#    "docs/**/*.{md,py,jpg,png,gif}",
+]
+exclude = [
+    "**/__pycache__",
+    "**/*.py[co]",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true # To allow direct references for dependencies (like plotpy from github,...)
+
+[tool.uv]
+default-groups = ["dev", "test", "docs"] # SEE https://www.loopwerk.io/articles/2024/python-uv-revisited/
+
+
+# [project.optional-dependencies] # Add optional dependencies if required
+
+[dependency-groups] # https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
+dev = [ # https://docs.astral.sh/uv/concepts/projects/dependencies/#development-dependencies
+    {%- if cookiecutter.with_jupyter_lab == "y" %}
+    "jupyterlab>=3.6.3",
+    {%- endif %}
+    "pip>=23",
+    "invoke>=2.2",
+    "wheel>=0.41.2",
+    "watchdog>=3.0.0",
+    "tox>=4.11",
+    "tox-gh-actions<4,>=3",
+    "mkdocs>=1.5.3",
+    "mkdocs-awesome-pages-plugin>=2.9.2",
+    "mkdocs-include-markdown-plugin>=6.0",
+    "mkdocs-material>=9.4.2",
+    "mkdocs-material-extensions>=1.2",
+    "mkdocstrings[python]>=0.23.0",
+    "mypy>=1.6.0",
+    {%- if cookiecutter.use_pytest == 'y' %}
+    "pytest>=7.4.2",
+    "pytest-cov>=4.1.0",
+    "coverage>=7.3.1",
+    {%- endif %}
+    {%- if cookiecutter.formatter|lower == 'black' %}
+    "black>=23.9.0",
+    {%- endif %}
+    "pre-commit>=3.3.1",
+    "ruff>=0.8",
+    {%- if cookiecutter.development_environment == "strict" %}
+    "safety!=2.3.5,>=2.3.4",
+    "typeguard>=4.1.5",
+    {%- endif %}
+    "commitizen>=3.10",
+]
+test = [
+    {%- if cookiecutter.formatter|lower == 'black' %}
+    {%- if cookiecutter.with_jupyter_lab == "y" %}
+    "black[jupyter]>=23.9.0",
+    {%- else %}
+    "black>=23.9.0",
+    {%- endif %}
+    {%- endif %}
+    "commitizen>=3.10",
+    "coverage[toml]>=7.3.1",
+    "mypy>=1.6.0",
+    "pre-commit>=3.3.1",
+    "pytest>=7.4.2",
+    "pytest-cov>=4.1.0",
+    "pytest-clarity>=1.0.1",
+    "pytest-mock>=3.10.0",
+    "pytest-xdist>=3.3.1",
+    "ruff>=0.8",
+    {%- if cookiecutter.development_environment == "strict" %}
+    "safety!=2.3.5,>=2.3.4",
+    "typeguard>=4.1.5",
+    {%- endif %}
+]
+docs = [
+    "mkdocs>=1.5.3",
+    "mkdocs-awesome-pages-plugin>=2.9.2",
+    "mkdocs-include-markdown-plugin>=6.0",
+    "mkdocs-material>=9.4.2",
+    "mkdocs-material-extensions>=1.2",
+    "mkdocstrings[python]>=0.23.0",
+]
+{%- if command_line == 'typer' %}
+
+[project.scripts]
+"{{ cookiecutter.project_slug }}" = "{{ cookiecutter.project_slug }}.cli:app"
+{%- elif command_line == 'click' or command_line == 'argparse' %}
+
+[project.scripts]
+"{{ cookiecutter.project_slug }}" = "{{ cookiecutter.project_slug }}.cli:main"
+{%- endif %}
+{%- if cookiecutter.private_package_repository_name %}
+
+[[tool.uv.index]]  # https://docs.astral.sh/uv/configuration/indexes/
+name = "{{ cookiecutter.private_package_repository_name|slugify }}"
+url = "{{ cookiecutter.private_package_repository_url }}"
+{%- endif %}
+
+[tool.commitizen]  # https://commitizen-tools.github.io/commitizen/config/
+bump_message = "bump(release): v$current_version → v$new_version"
+tag_format = "v$version"
+update_changelog_on_bump = true
+version = "{{ cookiecutter.version }}"
+version_files = [
+    "pyproject.toml:version",
+    "src/{{ cookiecutter.project_slug }}/__init__.py:__version__"
+    ]
+
+[tool.mypy]  # https://mypy.readthedocs.io/en/latest/config_file.html
+{%- if cookiecutter.with_pydantic_typing == "y" %}
+plugins = "pydantic.mypy"
+{%- endif %}
+{%- if cookiecutter.development_environment == "strict" %}
+strict = true
+disallow_subclassing_any = false
+disallow_untyped_decorators = false
+{%- endif %}
+ignore_missing_imports = true
+pretty = true
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+warn_unreachable = true
+{%- if cookiecutter.development_environment == "strict" and cookiecutter.with_pydantic_typing == "y" %}
+
+[tool.pydantic-mypy]  # https://pydantic-docs.helpmanual.io/mypy_plugin/#configuring-the-plugin
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+{%- endif %}
+{%- if cookiecutter.use_pytest == 'y' %}
+
+[tool.coverage.report]  # https://coverage.readthedocs.io/en/latest/config.html#report
+{%- if cookiecutter.development_environment == "strict" %}
+fail_under = 0 # Set the desired threshold for the coverage report to fail
+{%- endif %}
+precision = 1
+show_missing = true
+skip_covered = true
+
+[tool.coverage.run]  # https://coverage.readthedocs.io/en/latest/config.html#run
+branch = true
+command_line = "--module pytest"
+data_file = "reports/.coverage"
+source = ["src/{{ cookiecutter.project_slug }}"]
+
+[tool.coverage.xml]  # https://coverage.readthedocs.io/en/latest/config.html#xml
+output = "reports/coverage.xml"
+
+[tool.pytest.ini_options]  # https://docs.pytest.org/en/latest/reference/reference.html#ini-options-ref
+addopts = "--color=yes --doctest-modules --exitfirst --failed-first{% if cookiecutter.development_environment == 'strict' %} --strict-config --strict-markers --typeguard-packages={{ cookiecutter.project_slug }}{% endif %} --verbosity=2 --junitxml=reports/pytest.xml"
+{%- if cookiecutter.development_environment == "strict" %}
+filterwarnings = ["error", "ignore::DeprecationWarning"]
+{%- endif %}
+testpaths = ["src/{{ cookiecutter.project_slug }}", "tests"]
+xfail_strict = true
+{%- endif %}
+
+[tool.ruff]  # https://github.com/charliermarsh/ruff
+fix = true
+line-length = 100
+
+[tool.ruff.lint]
+{%- if cookiecutter.development_environment == "strict" %}
+select = ["A", "ASYNC", "B", "BLE", "C4", "C90", "D", "DTZ", "E", "EM", "ERA", "F", "FLY", "G", "I", "ICN", "INP", "ISC", "N", "NPY", "PGH", "PIE", "PLC", "PLE", "PLR", "PLW", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "S", "SIM", "SLF", "T10", "T20", "TCH", "TID", "TRY", "UP", "W", "YTT"]
+ignore = ["E501", "ISC001", "RET504", "S101"]
+unfixable = ["ERA001", "F401", "F841", "T201", "T203"]
+{%- else %}
+select = ["A", "ASYNC", "B", "C4", "C90", "D", "DTZ", "E", "F", "FLY", "I", "ISC", "N", "NPY", "PGH", "PIE", "PLC", "PLE", "PLR", "PLW", "PT", "RET", "RUF", "RSE", "SIM", "TID", "UP", "W", "YTT"]
+ignore = ["E501", "S307", "G010", "PGH003", "RET504", "S101"]
+unfixable = ["F401", "F841"]
+{%- endif %}
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+{%- if cookiecutter.development_environment == "strict" %}
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 100
+{%- endif %}
+
+[tool.ruff.lint.pydocstyle]
+convention = "{{ cookiecutter.docstring_style|lower }}"
+{%- if cookiecutter.formatter|lower == 'ruff-format' %}
+
+[tool.ruff.format]
+line-ending = "auto"
+{%- elif cookiecutter.formatter|lower == 'black' %}
+
+[tool.black]  # https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
+line-length = 100
+{%- endif %}

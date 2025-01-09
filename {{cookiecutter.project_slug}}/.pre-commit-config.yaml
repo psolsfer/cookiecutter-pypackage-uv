@@ -1,0 +1,93 @@
+# https://pre-commit.com
+default_install_hook_types: [commit-msg, pre-commit]
+default_stages: [pre-commit, manual]
+fail_fast: true
+repos:
+  - repo: meta
+    hooks:
+      - id: check-useless-excludes
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-check-mock-methods
+      - id: python-use-type-annotations
+      - id: text-unicode-replacement-char
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+        args: [--unsafe]
+      - id: debug-statements
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        types: [python]
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: name-tests-test
+        args: [--pytest-test-first]
+      {%- if cookiecutter.development_environment == "strict" %}
+      - id: no-commit-to-branch
+      {%- endif %}
+      - id: trailing-whitespace
+        types: [python]
+  - repo: local
+    hooks:
+      - id: commitizen
+        name: commitizen
+        entry: uv run cz check
+        args: [--commit-msg-file]
+        require_serial: true
+        language: system
+        stages: [commit-msg]
+      - id: ruff
+        name: ruff
+        entry: uv run ruff check
+        args: ["--extend-fixable={% if cookiecutter.development_environment == "strict" %}ERA001,F401,F841,T201,T203{% else %}F401,F841{% endif %}"{% if cookiecutter.development_environment == "simple" %}, "--fix-only"{% endif %}]
+        require_serial: true
+        language: system
+        types: [python, pyi, jupyter]
+      {%- if cookiecutter.formatter|lower == 'black' %}
+      - id: black
+        name: black
+        entry: uv run black
+        require_serial: true
+        language: system
+        types: [python]
+      {%- elif cookiecutter.formatter|lower == 'ruff-format' %}
+      - id: ruff-format
+        name: ruff-format
+        entry: uv run ruff format
+        require_serial: true
+        language: system
+        types: [python, pyi, jupyter]
+      {%- endif %}
+      - id: pyproject-check
+        name: pyproject.toml check
+        entry: ruff check pyproject.toml
+        language: system
+        pass_filenames: false
+      {%- if cookiecutter.development_environment == "strict" %}
+      - id: safety
+        name: safety
+        entry: safety check
+        language: system
+        pass_filenames: false
+      {%- endif %}
+      - id: mypy
+        name: mypy
+        entry: uv run mypy
+        language: system
+        types: [python]

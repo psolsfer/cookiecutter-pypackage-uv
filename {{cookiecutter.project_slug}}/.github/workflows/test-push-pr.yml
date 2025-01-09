@@ -1,0 +1,37 @@
+name: Test on push and PR
+
+on:
+    push:
+      tags:
+        - 'v*'
+    pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.10', '3.11'] # TODO Change this matrix to comply with the project's supported python versions
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+    - name: Install the project
+      run: uv sync --all-extras --dev
+    - name: Test with tox
+    #   run: uv run invoke test --tox-env ${{ matrix.tox-env }}
+      run: uv run tox
+
+#   finish:
+#     needs: test
+#     if: ${{ always() }}
+#     runs-on: ubuntu-latest

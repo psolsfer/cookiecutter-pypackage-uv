@@ -1,0 +1,15 @@
+# Page configuration for 'mkdocs-awesome-pages-plugin'
+nav:
+    - Home:
+          - index.md
+          - Getting started:
+                - Installation: installation.md
+                - Usage: usage.md
+          - Modules: modules.md
+    - FAQ: faq.md
+    - Troubleshooting: troubleshooting.md
+    - Contributing: contributing.md
+    {% if cookiecutter.create_author_file == 'y' -%}
+    - Authors: authors.md
+    {% endif -%}
+    - History: history.md
