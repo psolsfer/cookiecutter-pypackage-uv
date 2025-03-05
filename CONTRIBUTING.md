@@ -72,23 +72,42 @@ Ready to contribute? Here's how to set up `cookiecutter-pypackage-uv` for local 
     git checkout -b name-of-your-bugfix-or-feature
     ```
 
-   Now you can make your changes locally.
+    Note that this project has branch protection set up through pre-commit hooks. Direct commits to `main` and `staging` branches are prevented to maintain code quality and ensure proper review.
 
-5. When you're done making changes, check that your changes pass the tests, including testing other Python versions with tox:
+5. Now you can make your changes locally.
+
+6. When you're done making changes, check that your changes pass the tests, including testing other Python versions with tox:
 
     ```bash linenums="0"
     invoke test-all
     ```
 
-6. Commit your changes and push your branch to GitHub:
+7. Commit your changes and push your branch to GitHub:
 
+=== "using commitizen"
+    ```bash
+    git add .
+    uv run cz commit
+    git push origin name-of-your-bugfix-or-feature
+    ```
+
+=== "manual commits"
     ```bash linenums="0"
     git add .
     git commit -m "Your detailed description of your changes."
     git push origin name-of-your-bugfix-or-feature
     ```
 
-7. Submit a pull request through the GitHub website.
+8. Submit a pull request through the GitHub website.
+
+9. After your PR is merged, you can safely delete your branch:
+   ```bash
+   git checkout main
+   git pull  # Get the latest changes including your merge
+   git branch -d name-of-your-bugfix-or-feature
+   ```
+
+This workflow keeps the repository history clean and organized.
 
 ### Pull Request Guidelines
 

@@ -32,7 +32,7 @@ and "help wanted" is open to whoever wants to implement it.
 ### Write Documentation
 
 {{ cookiecutter.project_name }} could always use more documentation, whether as part of the
-official {{ cookiecutter.project_name }} docs, in docstrings, or even on the web in blog posts,
+official docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 ### Submit Feedback
@@ -79,9 +79,11 @@ Ready to contribute? Here's how to set up `{{ cookiecutter.project_slug }}` for 
     git checkout -b name-of-your-bugfix-or-feature
     ```
 
-   Now you can make your changes locally.
+    Note that this project has branch protection set up through pre-commit hooks. Direct commits to `main` and `staging` branches are prevented to maintain code quality and ensure proper review.
 
-5. After making your changes, ensure that they pass all tests. This includes testing compatibility with different Python versions using `tox`. You can run all tests with the following command:
+5. Now you can make your changes locally.
+
+6. After making your changes, ensure that they pass all tests. This includes testing compatibility with different Python versions using `tox`. You can run all tests with the following command:
 
     ```bash linenums="0"
     invoke test-all
@@ -95,15 +97,32 @@ Ready to contribute? Here's how to set up `{{ cookiecutter.project_slug }}` for 
 
     This command will check your code for any style issues and provide feedback on any discrepancies found. It’s crucial to maintain consistent coding style for readability and maintainability of the project."
 
-6. Commit your changes and push your branch to GitHub:
+7. Commit your changes and push your branch to GitHub:
 
+=== "using commitizen"
+    ```bash
+    git add .
+    uv run cz commit
+    git push origin name-of-your-bugfix-or-feature
+    ```
+
+=== "manual commits"
     ```bash linenums="0"
     git add .
     git commit -m "Your detailed description of your changes."
     git push origin name-of-your-bugfix-or-feature
     ```
 
-7. Submit a pull request through the GitHub website.
+8. Submit a pull request through the GitHub website.
+
+9. After your PR is merged, you can safely delete your branch:
+   ```bash
+   git checkout main
+   git pull  # Get the latest changes including your merge
+   git branch -d name-of-your-bugfix-or-feature
+   ```
+
+This workflow keeps the repository history clean and organized.
 
 ### Pull Request Guidelines
 
