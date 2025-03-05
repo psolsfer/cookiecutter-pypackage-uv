@@ -47,47 +47,43 @@ repos:
     hooks:
       - id: commitizen
         name: commitizen
-        entry: uv run cz check
+        entry: cz check
         args: [--commit-msg-file]
         require_serial: true
         language: system
         stages: [commit-msg]
-      - id: ruff
-        name: ruff
-        entry: uv run ruff check
-        args: ["--extend-fixable={% if cookiecutter.development_environment == "strict" %}ERA001,F401,F841,T201,T203{% else %}F401,F841{% endif %}"{% if cookiecutter.development_environment == "simple" %}, "--fix-only"{% endif %}]
-        require_serial: true
-        language: system
-        types: [python, pyi, jupyter]
-      {%- if cookiecutter.formatter|lower == 'black' %}
-      - id: black
-        name: black
-        entry: uv run black
-        require_serial: true
-        language: system
-        types: [python]
-      {%- elif cookiecutter.formatter|lower == 'ruff-format' %}
-      - id: ruff-format
-        name: ruff-format
-        entry: uv run ruff format
-        require_serial: true
-        language: system
-        types: [python, pyi, jupyter]
-      {%- endif %}
+    #   {%- if cookiecutter.formatter|lower == 'black' %}
+    #   - id: black
+    #     name: black
+    #     entry: black
+    #     require_serial: true
+    #     language: system
+    #     types: [python]
+    #   {%- endif %}
       - id: pyproject-check
         name: pyproject.toml check
         entry: ruff check pyproject.toml
         language: system
         pass_filenames: false
-      {%- if cookiecutter.development_environment == "strict" %}
-      - id: safety
-        name: safety
-        entry: safety check
-        language: system
-        pass_filenames: false
-      {%- endif %}
-      - id: mypy
-        name: mypy
-        entry: uv run mypy
-        language: system
-        types: [python]
+    #   {%- if cookiecutter.development_environment == "strict" %}
+    #   - id: safety
+    #     name: safety
+    #     entry: safety check
+    #     language: system
+    #     pass_filenames: false
+    #   {%- endif %}
+    #   - id: mypy
+    #     name: mypy
+    #     entry: mypy
+    #     args: ["--python-executable", "python", "--junit-xml", "reports/mypy.xml", "--explicit-package-bases"]
+    #     language: system
+    #     types: [python]
+#   - repo: https://github.com/astral-sh/ruff-pre-commit
+#     rev: v0.9.9 # Ruff version
+#     hooks:
+#         - id: ruff
+#           args: ["--extend-fixable=ERA001,F401,F841,T201,T203"]
+#         {%- if cookiecutter.formatter|lower == 'ruff-format' %}
+#         - id: ruff-format
+#           args: ["check"]
+#         {%- endif %}
