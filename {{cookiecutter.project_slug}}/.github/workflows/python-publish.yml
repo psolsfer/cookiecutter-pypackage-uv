@@ -45,7 +45,7 @@ jobs:
       - name: Run style & type checks
         run: uv run invoke lint
       - name: Build package
-        run: uv build{% endraw %}{%- if not cookiecutter.private_package_repository_name -%}{% raw %}
+        run: uv build --sdist --wheel{% endraw %}{%- if not cookiecutter.private_package_repository_name -%}{% raw %}
       - name: Store the distribution package
         uses: actions/upload-artifact@v4
         with:
