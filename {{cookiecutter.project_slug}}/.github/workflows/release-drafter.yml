@@ -2,35 +2,19 @@ name: Release Drafter
 
 on:
   push:
-    tags:
-    - "v*"
+    branches:
+      - main
   workflow_dispatch:
-  release:
-    types: [created]
 
 permissions:
   contents: write
 
 jobs:
-  draft-release:
-    name: Draft Release Notes
+  update-release-draft:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Draft Release Notes
-        uses: release-drafter/release-drafter@v6.1.0
+      - uses: release-drafter/release-drafter@v6.1.0
         with:
           config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-release:
-    name: Publish GitHub Release
-    needs: draft-release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Publish Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >-
-          gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false

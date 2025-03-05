@@ -73,35 +73,17 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
 
-  release-pypi:
-    name: Publish released package to PyPI
-    if: github.event.action == 'published'
-    needs: build
-    runs-on: ubuntu-latest
-    environment: pypi # NOTE Need to configure the environment in Github
-
-    permissions:
-      id-token: write  # IMPORTANT: mandatory for trusted publishing
-
-    steps:
-      - name: Download all the dists
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-      - name: Publish distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-
   github-release:
     name: >-
-        Sign the Python distribution with Sigstore
-        and upload them to GitHub Release
-    needs: release-pypi
+      Sign the Python distribution with Sigstore
+      and upload them to GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
     runs-on: ubuntu-latest
 
     permissions:
-        contents: write  # IMPORTANT: mandatory for making GitHub Releases
-        id-token: write  # IMPORTANT: mandatory for sigstore
+      contents: write  # IMPORTANT: mandatory for making GitHub Releases
+      id-token: write  # IMPORTANT: mandatory for sigstore
 
     steps:
       - name: Download all the dists
@@ -133,6 +115,25 @@ jobs:
           gh release upload
           "$GITHUB_REF_NAME" dist/**
           --repo "$GITHUB_REPOSITORY"
+
+  release-pypi:
+    name: Publish released package to PyPI
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: github-release
+    runs-on: ubuntu-latest
+    environment: pypi # NOTE Need to configure the environment in Github
+
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
 {% endraw %}{%- else %}{% raw %}
   publish-private:
     name: >-

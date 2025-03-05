@@ -4,7 +4,8 @@
 
 ## Before Your First Release
 
-1. **Configure the package.**
+1. **Configure the package**
+
     In your `pyproject.toml` file, make sure you have specified all the necessary information about your package. This includes the name, version, description, license, authors, and other metadata.
 
 2. **Build the package.**
@@ -24,7 +25,22 @@
 
     This will create a distribution package that you can upload to PyPI.
 
-3. **Publish the package.**
+3. **Set up GitHub Actions**
+
+    Ensure that the GitHub Actions workflows are correctly configured in your repository. These workflows automate the testing, building, and publishing process.
+
+4. **Configure environments in GitHub**
+
+    Set up the required environments in your GitHub repository settings:
+
+        - test-pypi (no approval required)
+        - pypi (with approval requirements if desired)
+
+5. **Verify the repository secrets**
+
+    Make sure you have correctly set up any required secrets for [PyPI] publishing. With trusted publishing, you typically won't need token secrets.
+
+6. **Publish the package.**
     Refer to '[upload packages to PyPI]' for detailed instructions about the required procedures.
 
     Run the following command in your terminal:
@@ -47,7 +63,7 @@
     uv publish --publish-url <name_of_private_repo>
     ```
 
-4. **Verify the registration.**
+7. **Verify the registration.**
     Visit [PyPI] to make sure your package is registered and visible.
 
 ## For Every Release
@@ -58,9 +74,7 @@
 
     Committing changes to your version control system is a crucial part of every release. It ensures that every change is tracked and can be reverted if necessary.
 
-    The recommended option is to use [Commitizen], a tool designed to help teams adhere to a standard commit message format. This standard format can then be used by tools like automated changelog generators and version bumpers.
-
-    Here’s how you can use Commitizen to commit your changes:
+    The recommended option is to use [Commitizen]:
 
     ```bash linenums="0"
     git add .
@@ -73,12 +87,12 @@
 
     ```bash linenums="0"
     git add .
-    git commit -m "Changelog for upcoming release 0.1.1."
+    git commit -m "Changelog for upcoming release x.y.z"
     ```
 
     Remember, it’s important to write clear and descriptive commit messages that accurately represent your changes.
 
-3. Update version number
+3. **Update version number**
 
     The version number of your package is a crucial piece of information that helps users and contributors understand the current state of your project. It’s important to update the version number whenever you make a significant change to your project. For more information see [SemVer].
 
