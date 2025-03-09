@@ -20,8 +20,7 @@ from typer.testing import CliRunner
 {% endif -%}
 
 from {{ cookiecutter.project_slug }} import {{ cookiecutter.project_slug }}
-{% if cookiecutter.command_line_interface|lower == "click"
-   or cookiecutter.command_line_interface|lower == "argparse" -%}
+{% if cookiecutter.command_line_interface|lower in ["click", "argparse"] -%}
 from {{ cookiecutter.project_slug }} import cli
 {% elif cookiecutter.command_line_interface|lower == "typer" -%}
 from {{ cookiecutter.project_slug }}.cli import app
