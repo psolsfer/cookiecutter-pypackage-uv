@@ -23,7 +23,11 @@ def main(args=None):
 {%- endif %}
 
 {%- if cookiecutter.command_line_interface|lower == 'typer' %}
-app = typer.Typer()
+app = typer.Typer(
+    help="{{cookiecutter.project_slug}} CLI",
+    add_completion=False,
+    no_args_is_help=True,
+    )
 
 @app.command()
 def main(args=None) -> None:
